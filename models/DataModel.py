@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Integer, TIMESTAMP, ForeignKey, text
+from sqlalchemy import Column, String, Numeric, Integer, TIMESTAMP, ForeignKey, text, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
@@ -81,5 +81,29 @@ class Servicio(Base):
     # Relación con el tipo de servicio
     tipo_servicio = relationship("TipoServicio", back_populates="servicios")
 
+    # Relación con el membresia servicio
+    membresia_servicio = relationship("MembresiaServicios", back_populates="servicio")
+
     def __repr__(self):
         return f"<Servicio(id={self.id}, nombre={self.nombre})>"
+
+class MembresiaServicios(Base):
+    __tablename__ = 'membresia_servicios'
+    
+    id = Column(Numeric(5), primary_key=True, autoincrement=True)
+    membresia_id = Column(String(3), ForeignKey('membresia.id'), nullable=False)
+    servicio_id = Column(String(3), ForeignKey('servicio.id'), nullable=False)
+    estado = Column(Numeric(1), default=1, nullable=True)
+    fecha_registro = Column(DateTime, default="CURRENT_TIMESTAMP")
+    fecha_actualizacion = Column(DateTime, default="CURRENT_TIMESTAMP")
+    usuario_id = Column(String(10), nullable=True)
+    ip_address = Column(String(15), nullable=True)
+    
+    # Relación con Membresia
+    membresia = relationship('Membresia', back_populates='membresia_servicios')
+    
+    # Relación con Servicio
+    servicio = relationship('Servicio', back_populates='membresia_servicios')
+
+    def __repr__(self):
+        return f"<Servicio(id={self.id}, membresia={self.membresia}, servicio={self.servicio})>"
