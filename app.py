@@ -7,6 +7,21 @@ from api.v1.Servicio import router as servicio_router
 from api.v1.MembresiaServicio import router as membresia_servicio_router
 from api.v1.Membresia import router as membresia_router
 from api.v1.Proceso import router as proceso_router
+from api.v1.Procedimiento import router as procedimiento_router
+from api.v1.TipoEntrenamiento import router as tipo_entrenamiento_router
+from api.v1.TipoActividad import router as tipo_actividad_router
+from api.v1.Entrenamiento import router as entrenamiento_router
+from api.v1.EntrenamientoActividad import router as entrenamiento_actividad_router
+from api.v1.EntrenamientoPlan import router as entrenamiento_plan_router
+from api.v1.EntrenamientoSeguimiento import router as entrenamiento_seguimiento_router
+from api.v1.TipoDocumento import router as tipo_documento_router
+from api.v1.RolPersona import router as rol_persona_router
+from api.v1.TipoEmail import router as tipo_email_router
+from api.v1.TipoTelefono import router as tipo_telefono_router
+from api.v1.Persona import router as persona_router
+from api.v1.PersonaTelefonos import router as persona_telefonos_router
+from api.v1.PersonaEmails import router as persona_emails_router
+from api.v1.PersonaRoles import router as persona_roles_router
 
 app = FastAPI(
     title="Api InRoute",
@@ -24,19 +39,36 @@ def read_root():
         "routes": "Explora las rutas en /docs para más información sobre los endpoints de la API."
     }
 
-# Api Geografia
+# APIs Geografia
 app.include_router(pais_router)
 app.include_router(depto_router)
 app.include_router(ciudad_router)
 
-# Apis Membresia
+# APIs Membresia
 app.include_router(tipoServicio_router)
 app.include_router(servicio_router)
 app.include_router(membresia_servicio_router)
 app.include_router(membresia_router)
 
-# Apis Entrenamiento
+# APIs Entrenamiento
 app.include_router(proceso_router)
+app.include_router(procedimiento_router)
+app.include_router(tipo_entrenamiento_router)
+app.include_router(tipo_actividad_router)
+app.include_router(entrenamiento_router)
+app.include_router(entrenamiento_actividad_router)
+app.include_router(entrenamiento_plan_router)
+app.include_router(entrenamiento_seguimiento_router)
+
+# APIs Persona
+app.include_router(tipo_documento_router)
+app.include_router(rol_persona_router)
+app.include_router(tipo_email_router)
+app.include_router(tipo_telefono_router)
+app.include_router(persona_router)
+app.include_router(persona_telefonos_router)
+app.include_router(persona_emails_router)
+app.include_router(persona_roles_router)
 
 # Inicia el servidor con Uvicorn
 if __name__ == "__main__":

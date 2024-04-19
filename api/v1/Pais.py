@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import Any
 
+from config import SessionLocal
 from models.DataModel import Pais
 from models.Pais import PaisBase
-from config import SessionLocal
 from abstract.AbstractAPI import AbstractAPI
 
 # Crear un router para la API de Pais
