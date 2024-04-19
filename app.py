@@ -5,6 +5,8 @@ from api.v1.Ciudad import router as ciudad_router
 from api.v1.TipoServicio import router as tipoServicio_router
 from api.v1.Servicio import router as servicio_router
 from api.v1.MembresiaServicio import router as membresia_servicio_router
+from api.v1.Membresia import router as membresia_router
+from api.v1.Proceso import router as proceso_router
 
 app = FastAPI(
     title="Api InRoute",
@@ -22,13 +24,19 @@ def read_root():
         "routes": "Explora las rutas en /docs para más información sobre los endpoints de la API."
     }
 
-# Registrar el enrutador de la API de PAIS
+# Api Geografia
 app.include_router(pais_router)
 app.include_router(depto_router)
 app.include_router(ciudad_router)
+
+# Apis Membresia
 app.include_router(tipoServicio_router)
 app.include_router(servicio_router)
 app.include_router(membresia_servicio_router)
+app.include_router(membresia_router)
+
+# Apis Entrenamiento
+app.include_router(proceso_router)
 
 # Inicia el servidor con Uvicorn
 if __name__ == "__main__":

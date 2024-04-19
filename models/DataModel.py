@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Integer, TIMESTAMP, ForeignKey, text, DateTime
+from sqlalchemy import Column, String, Numeric, Integer, TIMESTAMP, ForeignKey, text, DateTime, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
@@ -59,6 +59,8 @@ class Ciudad(Base):
     def __repr__(self):
         return f"<Ciudad(id={self.id}, nombre={self.nombre})>"
 
+# Modelo Membresia
+
 class TipoServicio(Base):
     __tablename__ = 'tipo_servicio'
 
@@ -82,7 +84,7 @@ class Servicio(Base):
     tipo_servicio = relationship("TipoServicio", back_populates="servicios")
 
     # Relación con el membresia servicio
-    membresia_servicio = relationship("MembresiaServicios", back_populates="servicio")
+    membresia_servicios = relationship("MembresiaServicios", back_populates="servicio")
 
     def __repr__(self):
         return f"<Servicio(id={self.id}, nombre={self.nombre})>"
@@ -106,4 +108,36 @@ class MembresiaServicios(Base):
     servicio = relationship('Servicio', back_populates='membresia_servicios')
 
     def __repr__(self):
-        return f"<Servicio(id={self.id}, membresia={self.membresia}, servicio={self.servicio})>"
+        return f"<MembresiaServicios(id={self.id}, membresia={self.membresia}, servicio={self.servicio})>"
+
+class Membresia(Base):
+    __tablename__ = 'membresia'
+    
+    id = Column(String(3), primary_key=True)
+    nombre = Column(String(20), nullable=False)
+    descripcion = Column(String(100), nullable=False)
+    vigente_desde = Column(Date, nullable=False)
+    vigente_hasta = Column(Date, nullable=True)
+
+    # Relación con el membresia servicio
+    membresia_servicios = relationship("MembresiaServicios", back_populates="membresia")
+
+    def __repr__(self):
+        return f"<Membresia(id={self.id}, nombre={self.nombre})>"
+
+# Extender Modelo Facturacion 
+
+# Modelo Entrenamiento
+
+class Proceso(Base):
+    __tablename__ = 'proceso'
+
+    id = Column(String(2), primary_key=True)
+    nombre = Column(String(25), nullable=False)
+    descripcion = Column(String(100), nullable=True)
+
+    # Relación con la tabla Procedimiento
+    procedimientos = relationship('Procedimiento', back_populates='proceso')
+
+    def __repr__(self):
+        return f"<Proceso(id={self.id}, nombre={self.nombre})>"
