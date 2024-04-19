@@ -1,13 +1,19 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List
+from typing import Any, List
+
 from models.DataModel import Ciudad
 from models.Ciudad import CiudadBase
 from config import SessionLocal
-# Crear un enrutador con el prefijo "/v1/ciudad"
+from abstract.AbstractAPI import AbstractAPI
+
+# Crear un router para la API de Ciudad
 router = APIRouter(prefix="/v1/ciudad", tags=["Ciudad"])
 
-# Dependency for database session
+# Crear una instancia de AbstractAPI para Ciudad
+ciudad_api = AbstractAPI(Ciudad, SessionLocal())
+
+# Dependencia para obtener la sesión de base de datos
 def get_db():
     db = SessionLocal()
     try:
@@ -15,60 +21,33 @@ def get_db():
     finally:
         db.close()
 
+# Ruta para crear una nueva ciudad
 @router.post("/", response_model=CiudadBase)
 def create_ciudad(ciudad: CiudadBase, db: Session = Depends(get_db)):
-    db_ciudad = Ciudad(**ciudad.model_dump())
-    db.add(db_ciudad)
-    db.commit()
-    db.refresh(db_ciudad)
-    return db_ciudad
+    return ciudad_api.create(ciudad)
 
+# Ruta para obtener una ciudad por ID
 @router.get("/{ciudad_id}", response_model=CiudadBase)
-def read_ciudad(ciudad_id: str, db: Session = Depends(get_db)):
-    db_ciudad = db.query(Ciudad).filter(Ciudad.id == ciudad_id).first()
-    if not db_ciudad:
-        raise HTTPException(status_code=404, detail="Ciudad not found")
-    return db_ciudad
+def get_ciudad(ciudad_id: str, db: Session = Depends(get_db)):
+    return ciudad_api.get(ciudad_id)
 
+# Ruta para actualizar una ciudad existente
 @router.put("/{ciudad_id}", response_model=CiudadBase)
 def update_ciudad(ciudad_id: str, ciudad: CiudadBase, db: Session = Depends(get_db)):
-    db_ciudad = db.query(Ciudad).filter(Ciudad.id == ciudad_id).first()
-    if not db_ciudad:
-        raise HTTPException(status_code=404, detail="Ciudad not found")
-    for key, value in ciudad.model_dump().items():
-        setattr(db_ciudad, key, value)
-    db.commit()
-    db.refresh(db_ciudad)
-    return db_ciudad
+    return ciudad_api.update(ciudad_id, ciudad)
 
-@router.delete("/{ciudad_id}", response_model=CiudadBase)
+# Ruta para eliminar una ciudad por ID
+@router.delete("/{ciudad_id}", response_model=dict)
 def delete_ciudad(ciudad_id: str, db: Session = Depends(get_db)):
-    db_ciudad = db.query(Ciudad).filter(Ciudad.id == ciudad_id).first()
-    if not db_ciudad:
-        raise HTTPException(status_code=404, detail="Ciudad not found")
-    db.delete(db_ciudad)
-    db.commit()
-    return db_ciudad
+    ciudad_api.delete(ciudad_id)
+    return {"message": f"Ciudad with ID {ciudad_id} has been deleted"}
 
+# Ruta para listar todas las ciudades
 @router.get("/", response_model=List[CiudadBase])
 def list_ciudades(db: Session = Depends(get_db)):
-    return db.query(Ciudad).all()
+    return ciudad_api.list()
 
+# Ruta para filtrar ciudades por un campo y valor
 @router.get("/filter/{field}/{value}", response_model=List[CiudadBase])
-def filter_ciudades(
-    field: str,  # Argumento sin valor predeterminado
-    value: str,  # Argumento sin valor predeterminado
-    db: Session = Depends(get_db)  # Argumento con valor predeterminado (dependencia)
-):
-    # Valida existencia del campo
-    if not hasattr(Ciudad, field):
-        raise HTTPException(status_code=400, detail="Campo de filtrado no válido")
-
-    # Utilizar SQLAlchemy para filtrar registros basados en el campo y valor dados
-    query = db.query(Ciudad).filter(getattr(Ciudad, field) == value)
-    resultados = query.all()
-
-    if not resultados:
-        raise HTTPException(status_code=404, detail="No se encontraron registros que coincidan con el filtro")
-
-    return resultados
+def filter_ciudades(field: str, value: Any, db: Session = Depends(get_db)):
+    return ciudad_api.filter(field, value)

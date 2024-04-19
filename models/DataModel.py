@@ -36,7 +36,7 @@ class Depto(Base):
     ip_address = Column(String(15), nullable=True)
 
     pais = relationship('Pais', back_populates='deptos')
-    ciudades = relationship('Ciudad', back_populates='Depto')
+    ciudades = relationship('Ciudad', back_populates='depto')
 
     def __repr__(self):
         return f"<Depto(id={self.id}, nombre={self.nombre})>"
@@ -58,3 +58,28 @@ class Ciudad(Base):
 
     def __repr__(self):
         return f"<Ciudad(id={self.id}, nombre={self.nombre})>"
+
+class TipoServicio(Base):
+    __tablename__ = 'tipo_servicio'
+
+    id = Column(String(2), primary_key=True, nullable=False)
+    nombre = Column(String(25), nullable=False)
+
+    # Relación con Servicio
+    servicios = relationship('Servicio', back_populates='tipo_servicio')
+
+    def __repr__(self):
+        return f"<TipoServicio(id={self.id}, nombre={self.nombre})>"
+
+class Servicio(Base):
+    __tablename__ = 'servicio'
+
+    id = Column(String(3), primary_key=True, nullable=False)
+    nombre = Column(String(30), nullable=False)
+    tipo_servicio_id = Column(String(2), ForeignKey('tipo_servicio.id'), nullable=True)
+
+    # Relación con el tipo de servicio
+    tipo_servicio = relationship("TipoServicio", back_populates="servicios")
+
+    def __repr__(self):
+        return f"<Servicio(id={self.id}, nombre={self.nombre})>"
