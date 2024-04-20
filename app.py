@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from config import DEBUG
 from api.v1.Pais import router as pais_router
 from api.v1.Depto import router as depto_router
 from api.v1.Ciudad import router as ciudad_router
@@ -29,6 +30,7 @@ app = FastAPI(
     version="1.0",
     docs_url="/docs",  # URL para acceder a Swagger UI
     redoc_url="/redoc",  # URL para acceder a Redoc
+    debug=DEBUG
 )
 
 @app.get("/", include_in_schema=False)

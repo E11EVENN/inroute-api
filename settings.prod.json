@@ -1,15 +1,14 @@
 {
     "DATABASE": {
         "user": "postgres",
-        "password": "",
+        "password": "postgres",
         "host": "localhost",
-        "port": 5452,
+        "port": 5432,
         "db": "postgres"
     },
-    "DEBUG": true,
-    "SECRET_KEY": "your_secret_key",
+    "DEBUG": false,
+    "SECRET_KEY": "_InRoute-app_env-->PRODUCTION_<····##·",
     "OTHER_CONFIG": {
         "example_setting": "value"
     }
 }
-

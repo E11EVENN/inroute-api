@@ -5,6 +5,8 @@ from datetime import datetime
 
 Base = declarative_base()
 
+# Modelo Geografico
+
 class Pais(Base):
     __tablename__ = "pais"
 
