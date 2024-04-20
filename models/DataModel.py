@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Integer, DECIMAL, DateTime, Date, Time, TIMESTAMP, ForeignKey, text
+from sqlalchemy import Column, String, Numeric, Integer, DECIMAL, DateTime, Date, Time, TIMESTAMP, ForeignKey, text, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
@@ -97,7 +97,7 @@ class Servicio(Base):
 class MembresiaServicios(Base):
     __tablename__ = 'membresia_servicios'
     
-    id = Column(Numeric(5), primary_key=True, autoincrement=True)
+    id = Column(Numeric(5), primary_key=True)
     membresia_id = Column(String(3), ForeignKey('membresia.id'), nullable=False)
     servicio_id = Column(String(3), ForeignKey('servicio.id'), nullable=False)
     estado = Column(Numeric(1), default=1, nullable=True)
@@ -118,7 +118,7 @@ class MembresiaServicios(Base):
 class Membresia(Base):
     __tablename__ = 'membresia'
     
-    id = Column(String(3), primary_key=True)
+    id = Column(String(3), primary_key=True, nullable=False)
     nombre = Column(String(20), nullable=False)
     descripcion = Column(String(100), nullable=False)
     vigente_desde = Column(Date, nullable=False)
@@ -137,7 +137,7 @@ class Membresia(Base):
 class Proceso(Base):
     __tablename__ = 'proceso'
 
-    id = Column(String(2), primary_key=True)
+    id = Column(String(2), primary_key=True, nullable=False)
     nombre = Column(String(25), nullable=False)
     descripcion = Column(String(100), nullable=True)
 
@@ -150,7 +150,7 @@ class Proceso(Base):
 class Procedimiento(Base):
     __tablename__ = 'procedimiento'
     
-    id = Column(String(5), primary_key=True)
+    id = Column(String(5), primary_key=True, nullable=False)
     proceso_id = Column(String(2), ForeignKey('proceso.id'), nullable=False)
     servicio_id = Column(String(3), ForeignKey('servicio.id'), nullable=True)
     nombre = Column(String(30), nullable=False)
@@ -191,7 +191,7 @@ class TipoActividad(Base):
 class Entrenamiento(Base):
     __tablename__ = 'entrenamiento'
     
-    id = Column(String(5), primary_key=True, comment='id')
+    id = Column(String(5), primary_key=True, comment='id', nullable=False)
     nombre = Column(String(25), nullable=False, comment='nombre')
     procedimiento_id = Column(String(5), ForeignKey('procedimiento.id'), nullable=False, comment='procedimiento_id')
     tipo_entrenamiento_id = Column(String(2), ForeignKey('tipo_entrenamiento.id'), nullable=False, comment='tipo_entrenamiento_id')
@@ -211,7 +211,7 @@ class Entrenamiento(Base):
 class EntrenamientoActividad(Base):
     __tablename__ = 'entrenamiento_actividad'
     
-    id = Column(Numeric(4), primary_key=True, default=nextval('entrenamiento_actividad_seq'), comment='id')
+    id = Column(Numeric(4), primary_key=True, comment='id')
     entrenamiento_id = Column(String(5), ForeignKey('entrenamiento.id'), nullable=False, comment='entrenamiento_id')
     tipo_actividad_id = Column(String(2), ForeignKey('tipo_actividad.id'), nullable=False, comment='tipo_actividad_id')
     nombre = Column(String(25), nullable=False, comment='nombre')
@@ -237,7 +237,7 @@ class EntrenamientoActividad(Base):
 class EntrenamientoPlan(Base):
     __tablename__ = 'entrenamiento_plan'
     
-    id = Column(Numeric(15), primary_key=True, default=nextval('entrenamiento_plan_seq'), comment='id')
+    id = Column(Numeric(15), primary_key=True, comment='id')
     entrenamiento_id = Column(String(5), ForeignKey('entrenamiento.id'), nullable=False, comment='entrenamiento_id')
     entrenador_id = Column(Numeric(10), ForeignKey('persona.id'), nullable=False, comment='entrenador_id')
     atleta_id = Column(Numeric(10), ForeignKey('persona.id'), nullable=False, comment='atleta_id')
@@ -249,9 +249,9 @@ class EntrenamientoPlan(Base):
 
     # Relaciones
     entrenamiento = relationship("Entrenamiento", back_populates="entrenamiento_planes")
-    entrenador = relationship("Persona", back_populates="entrenamiento_planes", foreign_keys=[entrenador_id])
-    atleta = relationship("Persona", back_populates="entrenamiento_planes", foreign_keys=[atleta_id])
     entrenamiento_seguimientos = relationship("EntrenamientoSeguimiento", back_populates="entrenamiento_plan")
+    entrenador = relationship("Persona", back_populates="entrenador_entrenamiento_planes", foreign_keys=[entrenador_id])
+    atleta = relationship("Persona", back_populates="atleta_entrenamiento_planes", foreign_keys=[atleta_id])
 
     def __repr__(self):
         return f"<EntrenamientoPlan(id={self.id}, entrenamiento={self.entrenamiento})>"
@@ -259,7 +259,7 @@ class EntrenamientoPlan(Base):
 class EntrenamientoSeguimiento(Base):
     __tablename__ = 'entrenamiento_seguimiento'
 
-    id = Column(Numeric(20), primary_key=True, default=nextval('entrenamiento_seguimiento_seq'), comment='id')
+    id = Column(Numeric(20), primary_key=True, comment='id')
     fecha_registro = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP'))
     entrenamiento_plan_id = Column(Numeric(15), ForeignKey('entrenamiento_plan.id'), nullable=False, comment='entrenamiento_plan_id')
     entrenamiento_actividad_id = Column(Numeric(4), ForeignKey('entrenamiento_actividad.id'), nullable=False, comment='entrenamiento_actividad_id')
@@ -329,16 +329,16 @@ class TipoTelefono(Base):
 
 class Persona(Base):
     __tablename__ = 'persona'
-    id = Column(Numeric(10), primary_key=True, nullable=False, autoincrement=True)
+    id = Column(Numeric(10), primary_key=True)
     nombre = Column(String(20), nullable=False)
     nombre_sec = Column(String(20), nullable=True)
     apellido = Column(String(40), nullable=False)
     apellido_sec = Column(String(40), nullable=True)
-    tipo_documento_id = Column(String(2), nullable=False)
+    tipo_documento_id = Column(String(2), ForeignKey('tipo_documento.id'), nullable=False)
     documento = Column(String(20), nullable=False)
     fecha_nacimiento = Column(Date, nullable=False)
-    nacionalidad_pais_id = Column(String(3), nullable=False)
-    lugar_nacimiento_ciudad_id = Column(String(3), nullable=False)
+    nacionalidad_pais_id = Column(String(3), ForeignKey('pais.id'), nullable=False)
+    lugar_nacimiento_ciudad_id = Column(String(3), ForeignKey('ciudad.id'), nullable=False)
     estado = Column(Numeric(1), default=1, nullable=True)
     fecha_registro = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP'))
     fecha_actualizacion = Column(TIMESTAMP(timezone=True), onupdate=text('CURRENT_TIMESTAMP'))
@@ -352,15 +352,17 @@ class Persona(Base):
     telefonos = relationship("PersonaTelefonos", back_populates="persona")
     emails = relationship("PersonaEmails", back_populates="persona")
     roles = relationship("PersonaRoles", back_populates="persona")
+    entrenador_entrenamiento_planes = relationship("EntrenamientoPlan", back_populates="entrenador", foreign_keys=[EntrenamientoPlan.entrenador_id])
+    atleta_entrenamiento_planes = relationship("EntrenamientoPlan", back_populates="atleta", foreign_keys=[EntrenamientoPlan.atleta_id])
 
     def __repr__(self):
         return f"<Persona(id={self.id}, nombre={self.nombre}, apellido={self.apellido})>"
 
 class PersonaTelefonos(Base):
     __tablename__ = 'persona_telefonos'
-    id = Column(Numeric(5), primary_key=True, nullable=False, autoincrement=True)
-    tipo_telefono_id = Column(String(3), nullable=False)
-    persona_id = Column(Numeric(10), nullable=False)
+    id = Column(Numeric(5), primary_key=True)
+    tipo_telefono_id = Column(String(3), ForeignKey('tipo_telefono.id'), nullable=False)
+    persona_id = Column(Numeric(10), ForeignKey('persona.id'), nullable=False)
     numero = Column(Numeric(15), nullable=False)
     whatsapp = Column(Boolean, default=False, nullable=True)
     estado = Column(Numeric(1), default=1, nullable=True)
@@ -379,9 +381,9 @@ class PersonaTelefonos(Base):
 
 class PersonaEmails(Base):
     __tablename__ = 'persona_emails'
-    id = Column(Numeric(10), primary_key=True, nullable=False, autoincrement=True)
-    persona_id = Column(Numeric(10), nullable=False)
-    tipo_email_id = Column(String(3), nullable=False)
+    id = Column(Numeric(10), primary_key=True)
+    persona_id = Column(Numeric(10), ForeignKey('persona.id'), nullable=False)
+    tipo_email_id = Column(String(3), ForeignKey('tipo_email.id'), nullable=False)
     email = Column(String(50), nullable=False)
     estado = Column(Numeric(1), default=1, nullable=True)
     fecha_registro = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP'))

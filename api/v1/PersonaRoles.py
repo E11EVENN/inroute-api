@@ -4,12 +4,13 @@ from config import SessionLocal
 from models.DataModel import PersonaRoles
 from models.PersonaRoles import PersonaRolesBase
 from abstract.AbstractAPI import AbstractAPI
+from typing import Any
 
 # Crear un enrutador (router) para los endpoints de la API
 router = APIRouter(prefix="/v1/persona_roles", tags=["PersonaRoles"])
 
 # Crear una instancia de AbstractAPI para PersonaRoles
-persona_roles_api = AbstractAPI(PersonaRoles, SessionLocal)
+persona_roles_api = AbstractAPI(PersonaRoles, SessionLocal())
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():

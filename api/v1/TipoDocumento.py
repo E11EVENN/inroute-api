@@ -4,12 +4,13 @@ from config import SessionLocal
 from models.DataModel import TipoDocumento
 from models.TipoDocumento import TipoDocumentoBase
 from abstract.AbstractAPI import AbstractAPI
+from typing import Any
 
 # Crear un enrutador (router) para los endpoints de la API
 router = APIRouter(prefix="/v1/tipo_documento", tags=["TipoDocumento"])
 
 # Crear una instancia de AbstractAPI para TipoDocumento
-tipo_documento_api = AbstractAPI(TipoDocumento, SessionLocal)
+tipo_documento_api = AbstractAPI(TipoDocumento, SessionLocal())
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():

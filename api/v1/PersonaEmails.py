@@ -4,12 +4,13 @@ from config import SessionLocal
 from models.DataModel import PersonaEmails
 from models.PersonaEmails import PersonaEmailsBase
 from abstract.AbstractAPI import AbstractAPI
+from typing import Any
 
 # Crear un enrutador (router) para los endpoints de la API
 router = APIRouter(prefix="/v1/persona_emails", tags=["PersonaEmails"])
 
 # Crear una instancia de AbstractAPI para PersonaEmails
-persona_emails_api = AbstractAPI(PersonaEmails, SessionLocal)
+persona_emails_api = AbstractAPI(PersonaEmails, SessionLocal())
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():

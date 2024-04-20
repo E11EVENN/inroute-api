@@ -12,7 +12,7 @@ class AbstractAPI(Generic[T]):
 
     def create(self, obj: T) -> T:
         """Crea un nuevo objeto basado en el modelo proporcionado."""
-        new_obj = self.model(**obj.dict())
+        new_obj = self.model(**obj.model_dump())
         self.db.add(new_obj)
         self.db.commit()
         self.db.refresh(new_obj)

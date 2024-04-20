@@ -4,12 +4,13 @@ from config import SessionLocal
 from models.DataModel import TipoEmail
 from models.TipoEmail import TipoEmailBase
 from abstract.AbstractAPI import AbstractAPI
+from typing import Any
 
 # Crear un enrutador (router) para los endpoints de la API
 router = APIRouter(prefix="/v1/tipo_email", tags=["TipoEmail"])
 
 # Crear una instancia de AbstractAPI para TipoEmail
-tipo_email_api = AbstractAPI(TipoEmail, SessionLocal)
+tipo_email_api = AbstractAPI(TipoEmail, SessionLocal())
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():
