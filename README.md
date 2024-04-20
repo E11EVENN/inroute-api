@@ -20,7 +20,7 @@ Ingresar a la aplicacion: http://localhost:8000/
 
 Construir la imagen de docker asi:
 
-docker build --build-arg GIT_COMMIT=$(git rev-parse HEAD) --build-arg GIT_AUTHOR=$(git log -1 --pretty=format:'%an') --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -t inroute-api .
+docker buildx build --build-arg GIT_COMMIT="$(git rev-parse HEAD)" --build-arg GIT_AUTHOR="$(git log -1 --pretty=format:'%an')" --build-arg BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%S%z')" -t inroute-api .
 
 ### Ejecucion del contenedor
 

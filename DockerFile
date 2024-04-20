@@ -19,6 +19,8 @@ ENV COMMIT_SHA=${GIT_COMMIT}
 ENV COMMIT_AUTHOR=${GIT_AUTHOR}
 ENV BUILD_DATE=${BUILD_DATE}
 
+RUN echo "Source Reference: ${COMMIT_SHA}, ${COMMIT_AUTHOR}, ${BUILD_DATE}"
+
 # Exponer el puerto en el que la aplicación se ejecuta
 EXPOSE 8000
 
