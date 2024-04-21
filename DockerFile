@@ -14,12 +14,20 @@ RUN pip install --no-cache-dir -r requirements.txt
 ARG GIT_COMMIT
 ARG GIT_AUTHOR
 ARG BUILD_DATE
+ARG VERSION
 
 ENV COMMIT_SHA=${GIT_COMMIT}
 ENV COMMIT_AUTHOR=${GIT_AUTHOR}
+ENV VERSION=${VERSION}
 ENV BUILD_DATE=${BUILD_DATE}
 
-RUN echo "Source Reference: ${COMMIT_SHA}, ${COMMIT_AUTHOR}, ${BUILD_DATE}"
+RUN echo "Source Reference: ${COMMIT_SHA}, ${COMMIT_AUTHOR}, ${VERSION}, ${BUILD_DATE}"
+
+LABEL name="inroute-api"
+LABEL commit=${COMMIT_SHA}
+LABEL author=${COMMIT_AUTHOR}
+LABEL version=${VERSION}
+LABEL build=${BUILD_DATE}
 
 # Exponer el puerto en el que la aplicación se ejecuta
 EXPOSE 8000
