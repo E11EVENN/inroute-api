@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from config import DEBUG
+from api.v1.Continente import router as continente_router
 from api.v1.Pais import router as pais_router
 from api.v1.Depto import router as depto_router
 from api.v1.Ciudad import router as ciudad_router
+from api.v1.Moneda import router as moneda_router
+from api.v1.MonedaPaises import router as moneda_paises_router
 from api.v1.TipoServicio import router as tipoServicio_router
 from api.v1.Servicio import router as servicio_router
 from api.v1.MembresiaServicio import router as membresia_servicio_router
@@ -42,9 +45,12 @@ def read_root():
     }
 
 # APIs Geografia
+app.include_router(continente_router)
 app.include_router(pais_router)
 app.include_router(depto_router)
 app.include_router(ciudad_router)
+app.include_router(moneda_router)
+app.include_router(moneda_paises_router)
 
 # APIs Membresia
 app.include_router(tipoServicio_router)

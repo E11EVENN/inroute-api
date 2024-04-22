@@ -6,6 +6,18 @@ from datetime import datetime
 Base = declarative_base()
 
 # Modelo Geografico
+class Continente(Base):
+    __tablename__ = 'continente'
+
+    id = Column(String(2), primary_key=True)
+    nombre = Column(String(25), nullable=False)
+    descripcion = Column(String(100), nullable=True)
+
+    # Relaciones
+    paises = relationship('Pais', back_populates='continente')
+
+    def __repr__(self):
+        return f"<Continente(id={self.id}, nombre={self.nombre})>"
 
 class Pais(Base):
     __tablename__ = "pais"
@@ -13,15 +25,18 @@ class Pais(Base):
     id = Column(String(3), primary_key=True, nullable=False)
     nombre = Column(String(40), nullable=False)
     indicativo_telefonico = Column(Numeric(4), nullable=False)
+    continente_id = Column(String(2), ForeignKey("continente.id"), nullable=False)
     estado = Column(Numeric(1), default=1)
     fecha_registro = Column(TIMESTAMP(timezone=True), server_default=text('CURRENT_TIMESTAMP'))
     fecha_actualizacion = Column(TIMESTAMP(timezone=True), onupdate=text('CURRENT_TIMESTAMP'))
     usuario_id = Column(String(10), nullable=True)
     ip_address = Column(String(15), nullable=True)
 
-    # Relación con la tabla Depto
+    # Relaciones
+    continente = relationship('Continente', back_populates='paises')
     deptos = relationship('Depto', back_populates='pais')
     ciudadanos = relationship("Persona", back_populates="nacionalidad_pais")
+    moneda_paises = relationship("MonedaPaises", back_populates="pais")
 
     def __repr__(self):
         return f"<Pais(id={self.id}, nombre={self.nombre})>"
@@ -56,12 +71,38 @@ class Ciudad(Base):
     usuario_id = Column(String(10), nullable=True)
     ip_address = Column(String(15), nullable=True)
 
-    # Relación con Depto
+    # Relaciones
     depto = relationship("Depto", back_populates="ciudades")
     nacidos = relationship("Persona", back_populates="lugar_nacimiento_ciudad")
 
     def __repr__(self):
         return f"<Ciudad(id={self.id}, nombre={self.nombre})>"
+
+class Moneda(Base):
+    __tablename__ = 'moneda'
+    id = Column(String(3), primary_key=True)
+    nombre = Column(String(30), nullable=False)
+    simbolo = Column(String(6), nullable=False)
+
+    # Relaciones
+    moneda_paises = relationship("MonedaPaises", back_populates="moneda")
+
+    def __repr__(self):
+        return f"<Moneda(id={self.id}, nombre={self.nombre})>"
+
+class MonedaPaises(Base):
+    __tablename__ = 'moneda_paises'
+    pais_id = Column(String(3), ForeignKey('pais.id'), primary_key=True)
+    moneda_id = Column(String(3), ForeignKey('moneda.id'), primary_key=True)
+    corriente = Column(Numeric(1), default=1)
+    estado = Column(Numeric(1), default=1)
+
+    # Relaciones con otras tablas
+    moneda = relationship("Moneda", back_populates="moneda_paises")
+    pais = relationship("Pais", back_populates="moneda_paises")
+
+    def __repr__(self):
+        return f"<MonedaPaises(pais_id={self.pais_id}, moneda_id={self.moneda_id})>"
 
 # Modelo Membresia
 

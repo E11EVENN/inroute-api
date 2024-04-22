@@ -6,6 +6,7 @@ class PaisBase(BaseModel):
     id: str
     nombre: str
     indicativo_telefonico: int
+    continente_id: str
     estado: Optional[int] = 1
     fecha_registro: Optional[datetime]
     fecha_actualizacion: Optional[datetime]
